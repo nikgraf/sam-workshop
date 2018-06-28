@@ -14,6 +14,12 @@ pip install --user aws-sam-cli
 USER_BASE_PATH=$(python3 -m site --user-base)
 export PATH=$PATH:$USER_BASE_PATH/bin
 exec "$SHELL"
+```
+
+## Test
+
+```bash
+aws --version
 sam --version
 ```
 
