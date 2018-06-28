@@ -1,0 +1,7 @@
+{
+  "name": "create",
+  "private": true,
+  "dependencies": {
+    "ksuid": "^1.1.1"
+  }
+}

@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+    
+Globals:
+  Function:
+    Timeout: 3
+    Runtime: nodejs8.10
+
+Resources:
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: create/
+      Handler: index.run
+      Events:
+        CreateItem:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: post
+      Policies:
+        # - DynamoDBCrudPolicy:
+        #     TableName: my-table
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'dynamodb:PutItem'
+              Resource:
+                'Fn::Join':
+                  - ''
+                  - - 'arn:aws:dynamodb:'
+                    - Ref: 'AWS::Region'
+                    - ':'
+                    - Ref: 'AWS::AccountId'
+                    - ':table/my-table'
+
+  MyTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: my-table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  ItemsApi:
+    Description: "API Gateway endpoint URL for the Api"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/items/"
